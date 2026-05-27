@@ -54,8 +54,26 @@ if opcion == "Home":
     st.title("Proyecto Aplicado en Streamlit")
     st.subheader("Módulo 1 - Python Fundamentals")
 
-    st.write("Miguel Angel Jimenez Huamani")
-    st.write("75447465")
+    st.markdown("""
+    Esta aplicación fue desarrollada como parte del proyecto práctico del módulo
+    **Python Fundamentals**.
+
+    El objetivo es aplicar conceptos básicos de programación en Python mediante
+    una aplicación interactiva en Streamlit.
+
+    **Temática elegida:** ventas e inventario.
+
+    **Tecnologías utilizadas:**
+    - Python
+    - Streamlit
+    - Pandas
+    - NumPy
+    - Programación orientada a objetos
+    """)
+
+    st.write("**Estudiante:** Colocar aquí tu nombre completo")
+    st.write("**Año:** 2026")
+
 
 # =====================================================
 # EJERCICIO 1 - FLUJO DE CAJA CON LISTAS
@@ -71,10 +89,14 @@ elif opcion == "Ejercicio 1":
 
     concepto = st.text_input("Concepto del movimiento")
     tipo = st.selectbox("Tipo de movimiento", ["Ingreso", "Gasto"])
-    valor = st.number_input("Valor", min_value=0.0, step=10.0)
+    valor = st.number_input("Valor", min_value=0.0, value=0.0, step=10.0)
 
     if st.button("Agregar movimiento"):
-        if concepto != "" and valor > 0:
+        if concepto.strip() == "":
+            st.error("Debe ingresar un concepto.")
+        elif valor <= 0:
+            st.error("Debe ingresar un valor mayor a cero.")
+        else:
             movimiento = {
                 "Concepto": concepto,
                 "Tipo": tipo,
@@ -83,8 +105,6 @@ elif opcion == "Ejercicio 1":
 
             st.session_state.movimientos.append(movimiento)
             st.success("Movimiento agregado correctamente.")
-        else:
-            st.error("Debe ingresar un concepto y un valor mayor a cero.")
 
     if len(st.session_state.movimientos) > 0:
         df_movimientos = pd.DataFrame(st.session_state.movimientos)
@@ -123,19 +143,23 @@ elif opcion == "Ejercicio 2":
 
     producto = st.text_input("Nombre del producto")
     categoria = st.selectbox("Categoría", ["Tecnología", "Oficina", "Limpieza", "Alimentos", "Otros"])
-    precio = st.number_input("Precio unitario", min_value=0.0, step=1.0)
-    cantidad = st.number_input("Cantidad", min_value=0, step=1)
+    precio = st.number_input("Precio unitario", min_value=0.0, value=0.0, step=1.0)
+    cantidad = st.number_input("Cantidad", min_value=0, value=0, step=1)
 
     if st.button("Agregar venta"):
-        if producto != "" and precio > 0 and cantidad > 0:
+        if producto.strip() == "":
+            st.error("Debe ingresar el nombre del producto.")
+        elif precio <= 0:
+            st.error("Debe ingresar un precio mayor a cero.")
+        elif cantidad <= 0:
+            st.error("Debe ingresar una cantidad mayor a cero.")
+        else:
             total = precio * cantidad
 
             venta = [producto, categoria, precio, cantidad, total]
             st.session_state.ventas.append(venta)
 
             st.success("Venta registrada correctamente.")
-        else:
-            st.error("Debe completar los datos correctamente.")
 
     if len(st.session_state.ventas) > 0:
         arreglo_ventas = np.array(st.session_state.ventas, dtype=object)
@@ -169,8 +193,8 @@ elif opcion == "Ejercicio 3":
     entre el número de clientes.
     """)
 
-    ventas_totales = st.number_input("Ventas totales", min_value=0.0, step=100.0)
-    numero_clientes = st.number_input("Número de clientes", min_value=1, step=1)
+    ventas_totales = st.number_input("Ventas totales", min_value=0.0, value=0.0, step=100.0)
+    numero_clientes = st.number_input("Número de clientes", min_value=1, value=1, step=1)
 
     if st.button("Calcular ticket promedio"):
         try:
@@ -196,6 +220,10 @@ elif opcion == "Ejercicio 3":
         st.subheader("Histórico de resultados")
         df_historico = pd.DataFrame(st.session_state.historico_funcion)
         st.dataframe(df_historico)
+
+        if st.button("Limpiar histórico"):
+            st.session_state.historico_funcion = []
+            st.success("Histórico limpiado correctamente.")
     else:
         st.info("Aún no hay cálculos registrados.")
 
@@ -224,28 +252,37 @@ elif opcion == "Ejercicio 4":
         st.subheader("Crear producto")
 
         nombre = st.text_input("Nombre del producto")
-        costo_unitario = st.number_input("Costo unitario", min_value=0.0, step=1.0)
-        precio_unitario = st.number_input("Precio unitario", min_value=0.0, step=1.0)
-        stock_actual = st.number_input("Stock actual", min_value=0, step=1)
-        stock_minimo = st.number_input("Stock mínimo", min_value=0, step=1)
+        costo_unitario = st.number_input("Costo unitario", min_value=0.0, value=0.0, step=1.0)
+        precio_unitario = st.number_input("Precio unitario", min_value=0.0, value=0.0, step=1.0)
+        stock_actual = st.number_input("Stock actual", min_value=0, value=0, step=1)
+        stock_minimo = st.number_input("Stock mínimo", min_value=0, value=0, step=1)
 
         if st.button("Guardar producto"):
-            try:
-                producto_objeto = InventarioProducto(
-                    nombre,
-                    costo_unitario,
-                    precio_unitario,
-                    stock_actual,
-                    stock_minimo
-                )
+            if nombre.strip() == "":
+                st.error("Debe ingresar el nombre del producto.")
+            elif costo_unitario <= 0:
+                st.error("Debe ingresar un costo unitario mayor a cero.")
+            elif precio_unitario <= 0:
+                st.error("Debe ingresar un precio unitario mayor a cero.")
+            elif precio_unitario <= costo_unitario:
+                st.error("El precio unitario debe ser mayor que el costo unitario.")
+            else:
+                try:
+                    producto_objeto = InventarioProducto(
+                        nombre,
+                        costo_unitario,
+                        precio_unitario,
+                        stock_actual,
+                        stock_minimo
+                    )
 
-                resumen = producto_objeto.resumen()
-                st.session_state.inventario.append(resumen)
+                    resumen = producto_objeto.resumen()
+                    st.session_state.inventario.append(resumen)
 
-                st.success("Producto creado correctamente.")
+                    st.success("Producto creado correctamente.")
 
-            except Exception as e:
-                st.error(f"Ocurrió un error: {e}")
+                except Exception as e:
+                    st.error(f"Ocurrió un error: {e}")
 
     # -----------------------------
     # LEER
@@ -273,8 +310,8 @@ elif opcion == "Ejercicio 4":
                 nombres_productos
             )
 
-            nuevo_stock = st.number_input("Nuevo stock actual", min_value=0, step=1)
-            nuevo_stock_minimo = st.number_input("Nuevo stock mínimo", min_value=0, step=1)
+            nuevo_stock = st.number_input("Nuevo stock actual", min_value=0, value=0, step=1)
+            nuevo_stock_minimo = st.number_input("Nuevo stock mínimo", min_value=0, value=0, step=1)
 
             if st.button("Actualizar producto"):
                 for item in st.session_state.inventario:
