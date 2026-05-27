@@ -55,24 +55,13 @@ if opcion == "Home":
     st.subheader("Módulo 1 - Python Fundamentals")
 
     st.markdown("""
-    Esta aplicación fue desarrollada como parte del proyecto práctico del módulo
-    **Python Fundamentals**.
-
     El objetivo es aplicar conceptos básicos de programación en Python mediante
     una aplicación interactiva en Streamlit.
-
-    **Temática elegida:** ventas e inventario.
-
-    **Tecnologías utilizadas:**
-    - Python
-    - Streamlit
-    - Pandas
-    - NumPy
-    - Programación orientada a objetos
+    Temática elegida: ventas e inventario.
     """)
 
-    st.write("**Estudiante:** Colocar aquí tu nombre completo")
-    st.write("**Año:** 2026")
+    st.write("**Estudiante: Miguel Angel Jimenez Huamani")
+
 
 
 # =====================================================
